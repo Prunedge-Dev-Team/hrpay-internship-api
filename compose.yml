@@ -1,0 +1,20 @@
+version: "3.9"
+name: "hrpay"
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: hrpay-database
+    restart: always
+    ports:
+      - "40432:5432"
+    environment:
+      - POSTGRES_USER=hrpay
+      - POSTGRES_PASSWORD=hrpay
+      - POSTGRES_DB=hrpay
+    volumes:
+      - hrpay-database:/var/lib/postgresql/data
+
+
+volumes:
+  hrpay-database:
