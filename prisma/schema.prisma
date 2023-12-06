@@ -27,6 +27,8 @@ model Organization {
   id          String     @id @default(cuid())
   name        String
   address     String
+  email       String     @unique
+  password    String
   description String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

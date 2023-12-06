@@ -1,10 +1,11 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { UpdateOrganizationDto } from '../dto/update-organization.dto';
+import { CreateOrganizationDto } from '../dto/create-organization.dto';
 
-type T = CreateUserDto | UpdateUserDto;
+type T = CreateOrganizationDto | UpdateOrganizationDto;
+
 @Injectable()
-export class TransformUserDto implements PipeTransform<T> {
+export class TransformOrgDto implements PipeTransform<T> {
   transform(value: T) {
     const newValue = this.convertToLowerCase(value, ['password']);
 
