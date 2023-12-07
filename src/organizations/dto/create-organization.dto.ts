@@ -7,16 +7,6 @@ export class CreateOrganizationDto {
   @ApiProperty()
   name: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  @ApiProperty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  password: string;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()

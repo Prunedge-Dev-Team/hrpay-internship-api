@@ -8,10 +8,8 @@ services:
     restart: always
     ports:
       - "40432:5432"
-    environment:
-      - POSTGRES_USER=hrpay
-      - POSTGRES_PASSWORD=hrpay
-      - POSTGRES_DB=hrpay
+    env_file:
+        - .env
     volumes:
       - hrpay-database:/var/lib/postgresql/data
 

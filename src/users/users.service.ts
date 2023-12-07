@@ -16,7 +16,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
   ) {}
 
-  private salt = this.configService.getOrThrow('SALT');
+  private salt = this.configService.get('SALT');
 
   async create(createUserDto: CreateUserDto) {
     const { email, password } = createUserDto;

@@ -11,16 +11,14 @@ import {
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
-import { TransformOrgDto } from './pipes/transform-org.pipe';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('organizations')
-@ApiTags('organization')
+@ApiTags('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
-  @UsePipes(TransformOrgDto)
   create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return this.organizationsService.create(createOrganizationDto);
   }
@@ -36,7 +34,6 @@ export class OrganizationsController {
   }
 
   @Patch(':id')
-  @UsePipes(TransformOrgDto)
   update(
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,

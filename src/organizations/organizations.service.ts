@@ -6,7 +6,6 @@ import {
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -16,22 +15,22 @@ export class OrganizationsService {
     private readonly prisma: PrismaService,
   ) {}
 
-  private salt = this.configService.getOrThrow('SALT');
-
   async create(createOrganizationDto: CreateOrganizationDto) {
-    const { email, password } = createOrganizationDto;
+    const { name } = createOrganizationDto;
+
     const exist = await this.prisma.organization.findUnique({
-      where: { email },
+      where: { name },
     });
+
     if (exist) {
       throw new ConflictException({
-        email: 'Organization with email already exists',
+        name: `Organization with ${name} already exists`,
       });
     }
 
-    createOrganizationDto.password = await bcrypt.hash(password, this.salt);
-
-    return this.prisma.organization.create({ data: createOrganizationDto });
+    return this.prisma.organization.create({
+      data: createOrganizationDto,
+    });
   }
 
   async findAll() {
