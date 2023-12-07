@@ -6,19 +6,28 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcryptjs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  private salt = this.configService.get('SALT');
 
   async create(createUserDto: CreateUserDto) {
-    const email = createUserDto.email.trim().toLowerCase();
+    const { email, password } = createUserDto;
     const exists = await this.prisma.user.findUnique({ where: { email } });
     if (exists) {
       throw new ConflictException({ email: 'Email already exist' });
     }
+
+    createUserDto.password = await bcrypt.hash(password, this.salt);
     return this.prisma.user.create({
-      data: { ...createUserDto, email: email },
+      data: createUserDto,
     });
   }
 

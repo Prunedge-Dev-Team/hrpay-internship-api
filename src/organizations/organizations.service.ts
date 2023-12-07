@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OrganizationsService {
-  create(createOrganizationDto: CreateOrganizationDto) {
-    return 'This action adds a new organization';
+  constructor(
+    private configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async create(createOrganizationDto: CreateOrganizationDto) {
+    const { name } = createOrganizationDto;
+
+    const exist = await this.prisma.organization.findUnique({
+      where: { name },
+    });
+
+    if (exist) {
+      throw new ConflictException({
+        name: `Organization with ${name} already exists`,
+      });
+    }
+
+    return this.prisma.organization.create({
+      data: createOrganizationDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all organizations`;
+  async findAll() {
+    return this.prisma.organization.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} organization`;
+  async findOne(id: string) {
+    return this.prisma.organization.findUnique({ where: { id } });
   }
 
-  update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-    return `This action updates a #${id} organization`;
+  async update(id: string, updateOrganizationDto: UpdateOrganizationDto) {
+    const org = await this.findOne(id);
+    if (!org) {
+      throw new NotFoundException(`Org with ${id} not found`);
+    }
+
+    return this.prisma.organization.update({
+      where: { id },
+      data: updateOrganizationDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} organization`;
+  async remove(id: string) {
+    const org = await this.findOne(id);
+    if (!org) {
+      throw new NotFoundException(`Org with ${id} not found`);
+    }
+    return this.prisma.organization.delete({ where: { id } });
   }
 }
